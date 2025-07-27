@@ -1,0 +1,261 @@
+/* Custom Icon System for Wander Panda */
+
+/* Icon Font Face (if using icon font) */
+@font-face {
+  font-family: 'WanderPandaIcons';
+  src: url('/fonts/wander-panda-icons.woff2') format('woff2'),
+       url('/fonts/wander-panda-icons.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+/* Base Icon Class */
+.wp-icon {
+  font-family: 'WanderPandaIcons';
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+}
+
+/* Custom Icon Classes (replace with your actual icon codes) */
+.wp-icon-logo::before {
+  content: '\e001';
+}
+
+.wp-icon-adventure::before {
+  content: '\e002';
+}
+
+.wp-icon-food::before {
+  content: '\e003';
+}
+
+.wp-icon-culture::before {
+  content: '\e004';
+}
+
+.wp-icon-lifestyle::before {
+  content: '\e005';
+}
+
+.wp-icon-location::before {
+  content: '\e006';
+}
+
+.wp-icon-calendar::before {
+  content: '\e007';
+}
+
+.wp-icon-users::before {
+  content: '\e008';
+}
+
+.wp-icon-heart::before {
+  content: '\e009';
+}
+
+.wp-icon-star::before {
+  content: '\e010';
+}
+
+.wp-icon-arrow-right::before {
+  content: '\e011';
+}
+
+.wp-icon-arrow-left::before {
+  content: '\e012';
+}
+
+.wp-icon-close::before {
+  content: '\e013';
+}
+
+.wp-icon-menu::before {
+  content: '\e014';
+}
+
+.wp-icon-email::before {
+  content: '\e015';
+}
+
+.wp-icon-phone::before {
+  content: '\e016';
+}
+
+.wp-icon-social-facebook::before {
+  content: '\e017';
+}
+
+.wp-icon-social-twitter::before {
+  content: '\e018';
+}
+
+.wp-icon-social-instagram::before {
+  content: '\e019';
+}
+
+.wp-icon-social-linkedin::before {
+  content: '\e020';
+}
+
+/* Icon Sizes */
+.wp-icon-xs {
+  font-size: 0.75rem;
+}
+
+.wp-icon-sm {
+  font-size: 1rem;
+}
+
+.wp-icon-md {
+  font-size: 1.25rem;
+}
+
+.wp-icon-lg {
+  font-size: 1.5rem;
+}
+
+.wp-icon-xl {
+  font-size: 2rem;
+}
+
+.wp-icon-2xl {
+  font-size: 3rem;
+}
+
+/* Icon Colors */
+.wp-icon-primary {
+  color: var(--color-primary-500);
+}
+
+.wp-icon-secondary {
+  color: var(--color-neutral-600);
+}
+
+.wp-icon-white {
+  color: white;
+}
+
+.wp-icon-muted {
+  color: var(--color-neutral-400);
+}
+
+/* SVG Icon Styles (for custom SVG icons) */
+.svg-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* Logo SVG specific styles */
+.logo-svg {
+  height: 2rem;
+  width: auto;
+  transition: all var(--transition-fast);
+}
+
+.logo-svg:hover {
+  transform: scale(1.05);
+}
+
+.logo-svg-sm {
+  height: 1.5rem;
+}
+
+.logo-svg-lg {
+  height: 3rem;
+}
+
+/* Icon Button Styles */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--color-neutral-600);
+}
+
+.icon-button:hover {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-800);
+}
+
+.icon-button-primary {
+  background-color: var(--color-primary-500);
+  color: white;
+}
+
+.icon-button-primary:hover {
+  background-color: var(--color-primary-600);
+}
+
+/* Social Media Icon Styles */
+.social-icons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-500);
+  color: white;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  font-size: 0.875rem;
+}
+
+.social-icon:hover {
+  background-color: var(--color-primary-600);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Feature Icon Styles */
+.feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius-2xl);
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-500);
+  font-size: 2rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Navigation Icon Styles */
+.nav-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-neutral-600);
+  transition: color var(--transition-fast);
+}
+
+.nav-icon:hover {
+  color: var(--color-primary-500);
+}

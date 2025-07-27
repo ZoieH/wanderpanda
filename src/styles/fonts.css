@@ -1,0 +1,127 @@
+/* Google Fonts Integration for Wander Panda */
+
+/* 
+Typography Hierarchy:
+- Maitree: Titles and headings (serif, elegant)
+- Parisienne: Accent text and highlights (script, decorative)
+- Karla: Body text and UI elements (sans-serif, readable)
+*/
+
+/* CSS Custom Properties for Font Families */
+:root {
+  --font-primary: 'Karla', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-secondary: 'Maitree', Georgia, 'Times New Roman', serif;
+  --font-accent: 'Parisienne', cursive, serif;
+}
+
+/* Apply fonts to base elements */
+body {
+  font-family: var(--font-primary);
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+}
+
+/* Accent text styling */
+em, .italic-text, .accent-text {
+  font-family: var(--font-accent);
+  font-style: normal; /* Parisienne is naturally script-like */
+  font-weight: 400;
+}
+
+/* Logo text styling */
+.logo-text {
+  font-family: var(--font-secondary);
+  font-weight: 600;
+}
+
+.logo-text .accent {
+  font-family: var(--font-accent);
+  font-weight: 400;
+}
+
+/* Typography utility classes */
+.font-primary {
+  font-family: var(--font-primary);
+}
+
+.font-secondary {
+  font-family: var(--font-secondary);
+}
+
+.font-accent {
+  font-family: var(--font-accent);
+}
+
+/* Weight variations for Karla (body text) */
+.font-primary.font-light {
+  font-weight: 300;
+}
+
+.font-primary.font-normal {
+  font-weight: 400;
+}
+
+.font-primary.font-medium {
+  font-weight: 500;
+}
+
+.font-primary.font-semibold {
+  font-weight: 600;
+}
+
+.font-primary.font-bold {
+  font-weight: 700;
+}
+
+/* Weight variations for Maitree (titles) */
+.font-secondary.font-light {
+  font-weight: 300;
+}
+
+.font-secondary.font-normal {
+  font-weight: 400;
+}
+
+.font-secondary.font-medium {
+  font-weight: 500;
+}
+
+.font-secondary.font-semibold {
+  font-weight: 600;
+}
+
+.font-secondary.font-bold {
+  font-weight: 700;
+}
+
+/* Special styling for accent elements */
+.accent-large {
+  font-family: var(--font-accent);
+  font-size: 1.5em;
+  line-height: 1.2;
+}
+
+.accent-highlight {
+  font-family: var(--font-accent);
+  color: var(--color-primary-500);
+  font-size: 1.2em;
+}
+
+/* Responsive font loading optimization */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+  
+  .accent-large {
+    font-size: 1.3em;
+  }
+  
+  .accent-highlight {
+    font-size: 1.1em;
+  }
+}
