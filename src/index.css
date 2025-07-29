@@ -1,15 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Import design system */
+/* Import design system first */
 @import './styles/fonts.css';
 @import './styles/design-system.css';
 @import './styles/icons.css';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Base styles */
 * {
   box-sizing: border-box;
+}
+
+/* Remove default focus outlines and add custom ones */
+*:focus {
+  outline: none;
+}
+
+/* Add custom focus styles for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove focus outline on mouse click but keep for keyboard navigation */
+*:focus:not(:focus-visible) {
+  outline: none;
 }
 
 html {

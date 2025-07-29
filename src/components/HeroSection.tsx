@@ -1,28 +1,44 @@
 import React from 'react';
+import Button from './ui/Button';
 
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center">
+      {/* Background with overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.pexels.com/photos/1450363/pexels-photo-1450363.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop')`
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/hero.jpeg')`
         }}
       />
-      <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
-        <h1 className="text-5xl md:text-7xl font-secondary font-light mb-6">
-          Work Together &
+      
+      {/* Hero Content */}
+      <div className="relative z-10 text-center text-white max-w-5xl mx-auto px-4">
+        <h1 
+          className="font-secondary font-light mb-6 leading-tight"
+          style={{ 
+            fontSize: '76px',
+            fontFamily: 'Maitree, Georgia, serif'
+          }}
+        >
+          Work Together
           <br />
-          <em className="font-accent text-5xl md:text-7xl text-orange-400">Adventure Together</em>
+          <span 
+            style={{ 
+              fontSize: '76px',
+              fontFamily: 'Maitree, Georgia, serif'
+            }}
+          >
+            Adventure Together
+          </span>
         </h1>
-        <p className="text-xl md:text-2xl font-primary mb-8 max-w-3xl mx-auto leading-relaxed">
-          Join Wander Panda for an unforgettable 2-week workation in China, exploring the ancient 
-          traditions and cultural sites of our destinations. Embrace community, culture, and adventure while 
-          thriving with like-minded digital nomads.
+        <p className="text-xl md:text-2xl font-primary mb-8 max-w-4xl mx-auto leading-relaxed opacity-90">
+          Join Wander Panda for an unforgettable 2-week workation in China, exploring hand-picked destinations, 
+          embracing community, culture, and adventure while thriving with like-minded digital nomads.
         </p>
-        <button className="bg-orange-500 text-white px-8 py-4 rounded-full text-lg font-primary font-medium hover:bg-orange-600 transition-all duration-300 transform hover:scale-105">
-          Start from $599
-        </button>
+        <Button variant="primary" size="lg" className="transform hover:scale-105">
+          Start from $899
+        </Button>
       </div>
     </section>
   );

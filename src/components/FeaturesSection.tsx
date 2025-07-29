@@ -1,49 +1,85 @@
 import React from 'react';
-import { Home, Users, Briefcase, Headphones } from 'lucide-react';
 
 const features = [
   {
-    icon: Home,
+    icon: '🏠',
     title: 'Accommodation',
-    description: 'Private coliving accommodation. Convenient location. Superior rooms with Premium amenities. Private shared spaces such as co-living facilities. Security cameras'
+    items: ['Deep sleep bedding', 'Reliable Internet connection', 'Private shared spaces', 'Security cameras']
   },
   {
-    icon: Briefcase,
+    icon: '💻',
     title: 'Workspace',
-    description: 'Dedicated workspace space. High speed internet. Reliable equipment. Rock/noise space. Efficiency productive space. Coffee café. Community laptop'
+    items: ['Dedicated workspace', 'High speed internet', 'Reliable equipment', 'Coffee café']
   },
   {
-    icon: Users,
+    icon: '👥',
     title: 'Community Events',
-    description: 'Ice breaker. Renewal activities. Sports. Mental activities. Legit. meditation. Ice bath and. sauna-related. self hosting activities. Everything sharing workshop. Culture exploration.'
+    items: ['Ice breaker', 'Farewell dinner', 'Sports activities', 'Culture exploration']
   },
   {
-    icon: Headphones,
+    icon: '🔧',
     title: 'Logistic Support',
-    description: 'China phone number. Pocket WiFi. Travel station. Logistics support. Translate support service. Anything else can make your China trip seamlessly.'
+    items: ['China payment setup', 'Pocket WiFi', 'Travel station', 'Translate support']
   }
 ];
 
 const FeaturesSection = () => {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-neutral-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-secondary font-light mb-4">
-            We make the experience <em className="font-accent text-accent-lg text-primary-600">seamless</em>
+          <h2 
+            className="font-secondary font-light mb-4"
+            style={{
+              fontSize: '48px',
+              fontFamily: 'Maitree, Georgia, serif'
+            }}
+          >
+            We make the experience <span 
+              style={{
+                fontSize: '54px',
+                fontFamily: 'Parisienne, cursive'
+              }}
+            >seamless</span>
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
-              <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center">
-                  <feature.icon size={32} className="text-orange-500" />
+            <div 
+              key={index} 
+              className="shadow-lg hover:shadow-xl transition-shadow duration-300"
+              style={{ 
+                borderRadius: '20px',
+                backgroundColor: '#ffffff'
+              }}
+            >
+              <div className="p-8">
+                <div className="flex justify-center mb-6">
+                  <div 
+                    className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-3xl"
+                    style={{ borderRadius: '12px' }}
+                  >
+                    {feature.icon}
+                  </div>
                 </div>
+                <h3 
+                  className="text-center mb-4 font-primary font-medium"
+                  style={{
+                    fontSize: '36px',
+                    fontFamily: 'Karla, sans-serif'
+                  }}
+                >
+                  {feature.title}
+                </h3>
+                <ul className="space-y-2">
+                  {feature.items.map((item, itemIndex) => (
+                    <li key={itemIndex} className="text-gray-600 font-primary text-sm leading-relaxed">
+                      • {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 className="text-xl font-secondary font-medium text-center mb-4">{feature.title}</h3>
-              <p className="text-gray-600 font-primary text-sm leading-relaxed">{feature.description}</p>
             </div>
           ))}
         </div>

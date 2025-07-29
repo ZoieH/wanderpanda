@@ -1,115 +1,121 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Calendar, ThumbsUp } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Search, Filter } from 'lucide-react';
+import Button from '../components/ui/Button';
+import BlogPostCard from '../components/BlogPostCard';
+import { client, POSTS_QUERY } from '../lib/sanity';
 
-const blogPosts = [
-  {
-    id: 'china-digital-nomad-heaven',
-    title: 'Could China Be the Next Digital Nomad Heaven?',
-    date: '24 Oct 2024',
-    excerpt: 'Discover why China could be the next digital nomad hotspot. Explore visa...',
-    image: 'https://images.pexels.com/photos/2506923/pexels-photo-2506923.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop',
-    tags: ['Insight', 'Spotlight'],
-    likes: 2
-  },
-  {
-    id: 'alipay-wechat-setup',
-    title: 'How to Set Up Alipay and WeChat Pay (Step by Step Guide) - Pay Like a Crazy Rich Asian',
-    date: '19 Nov 2024',
-    excerpt: 'Want to pay like a Crazy Rich Asian in China? Learn how to set up Alipay and...',
-    image: 'https://images.pexels.com/photos/3943723/pexels-photo-3943723.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop',
-    tags: ['Logistic', 'How to'],
-    likes: 1
-  },
-  {
-    id: 'china-30-days-visa-free',
-    title: 'China\'s 30 Days Visa Free Policy - Would you come? (Nov 24 updated)',
-    date: '19 Nov 2024',
-    excerpt: 'Discover China\'s new 30-day visa-free policy for travelers from 20 countries...',
-    image: 'https://images.pexels.com/photos/2422280/pexels-photo-2422280.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop',
-    tags: ['Logistic', 'How to'],
-    likes: 0
-  },
-  {
-    id: 'china-vpn-guide',
-    title: 'Survive Under China\'s Firewall: The VPNs That Actually Work in China (2024 tested and updated)',
-    date: '19 Nov 2024',
-    excerpt: 'Discover the best VPNs that work in China as of November 2024. Stay connected...',
-    image: 'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop',
-    tags: ['Logistic', 'How to'],
-    likes: 0
-  }
-];
+interface BlogPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  publishedAt: string;
+  excerpt?: string;
+  imageUrl?: string;
+  authorName?: string;
+  authorImage?: string;
+  categories?: string[];
+  estimatedReadingTime?: number;
+}
 
 const BlogPage = () => {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        console.log('🔍 Starting to fetch posts...');
+        console.log('📝 Query:', POSTS_QUERY);
+        const posts = await client.fetch(POSTS_QUERY);
+        console.log('✅ Posts fetched successfully:', posts);
+        console.log('📊 Number of posts:', posts.length);
+        
+        if (posts.length > 0) {
+          console.log('🎯 First post:', posts[0]);
+        }
+        
+        setBlogPosts(posts);
+      } catch (error) {
+        console.error('❌ Error fetching posts:', error);
+        console.error('🔍 Error details:', {
+          message: (error as Error).message,
+          name: (error as Error).name,
+          stack: (error as Error).stack
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-16 flex items-center justify-center">
+        <div className="text-xl">Loading posts...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pt-16">
       {/* Header */}
-      <div className="bg-white py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-6xl font-light text-center mb-8">
-            Resource & <em className="font-accent text-accent-lg text-primary-600">Insights</em>
+      <div className="bg-gradient-to-br from-gray-50 to-orange-50 py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 
+            className="text-4xl md:text-6xl font-light mb-6"
+            style={{
+              fontFamily: 'Maitree, Georgia, serif'
+            }}
+          >
+            Resource & <em 
+              style={{
+                fontFamily: 'Parisienne, cursive',
+                fontSize: '1.1em'
+              }}
+            >
+              Insights
+            </em>
           </h1>
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            Discover travel insights, digital nomad tips, and cultural experiences from around the world
+          </p>
+          
+          {/* Search and Filter */}
+          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <div className="relative flex-1">
+              <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search articles..."
+                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              />
+            </div>
+            <button className="flex items-center justify-center px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <Filter size={20} className="text-gray-600" />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Blog Posts Grid */}
       <section className="py-12 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {blogPosts.map((post) => (
-              <article key={post.id} className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
-                <Link to={`/blog/${post.id}`}>
-                  <img 
-                    src={post.image} 
-                    alt={post.title}
-                    className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </Link>
-                
-                <div className="p-8">
-                  <div className="flex items-center text-sm text-gray-500 mb-4">
-                    <Calendar size={16} className="mr-2" />
-                    <span>{post.date}</span>
-                  </div>
-                  
-                  <Link to={`/blog/${post.id}`}>
-                    <h2 className="text-2xl font-medium mb-4 hover:text-orange-500 transition-colors">
-                      {post.title}
-                    </h2>
-                  </Link>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {post.tags.map((tag) => (
-                      <span 
-                        key={tag}
-                        className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  
-                  <p className="text-gray-600 mb-6 leading-relaxed">
-                    {post.excerpt}
-                  </p>
-                  
-                  <div className="flex items-center justify-between">
-                    <Link 
-                      to={`/blog/${post.id}`}
-                      className="text-orange-500 hover:text-orange-600 font-medium"
-                    >
-                      READ MORE
-                    </Link>
-                    <div className="flex items-center text-gray-400">
-                      <ThumbsUp size={16} className="mr-2" />
-                      <span>{post.likes}</span>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+          {blogPosts.length === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-xl text-gray-600 mb-4">No blog posts found</h3>
+              <p className="text-gray-500">
+                Make sure you have created posts in your Sanity Studio and they have the correct document type "post".
+              </p>
+            </div>
+          ) : (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+              {blogPosts.map((post) => (
+                <BlogPostCard key={post._id} post={post} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -131,9 +137,9 @@ const BlogPage = () => {
               placeholder="Your Email"
               className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
-            <button className="bg-gray-800 text-white px-8 py-3 rounded-lg hover:bg-gray-900 transition-colors font-medium whitespace-nowrap">
+            <Button variant="secondary" size="md">
               Subscribe
-            </button>
+            </Button>
           </div>
         </div>
       </section>

@@ -1,36 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Calendar, Users } from 'lucide-react';
-
-const trips = [
-  {
-    id: 'mysterious-yunnan',
-    title: 'Mysterious Yunnan',
-    location: 'Dali, Yunnan',
-    dates: '20250304 - 20250317',
-    activity: 'Trekking, Rock climbing',
-    image: 'https://images.pexels.com/photos/2506923/pexels-photo-2506923.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-    price: 'Book Now'
-  },
-  {
-    id: 'salty-hainan',
-    title: 'Salty Hainan',
-    location: 'Boyed Bay, Hainan',
-    dates: '20240814 - 20240827',
-    activity: 'Surfing, Kitesurfing',
-    image: 'https://images.pexels.com/photos/1450363/pexels-photo-1450363.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-    price: 'Book Now'
-  },
-  {
-    id: 'crude-xinjiang',
-    title: 'Crude Xinjiang',
-    location: 'Altai, Xinjiang',
-    dates: 'TBD',
-    activity: 'Skiing, Snowboarding',
-    image: 'https://images.pexels.com/photos/3225531/pexels-photo-3225531.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-    price: 'Wishlist'
-  }
-];
+import { trips } from '../data/trips';
 
 const TripsSection = () => {
   return (
@@ -38,52 +8,82 @@ const TripsSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-secondary font-light mb-4">
-            Join the <em className="font-accent text-accent-lg text-primary-600">tribe</em> to explore together
+            <span style={{ fontFamily: 'Maitree, Georgia, serif' }}>Upcoming</span>{' '}
+            <span style={{ fontFamily: 'Parisienne, cursive' }}>Trips</span>
           </h2>
-          <p className="text-xl font-primary text-gray-600">2025 Calendar Confirmed ✓</p>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Join our carefully curated workation experiences in China. Each trip is designed to provide the perfect balance of productivity and adventure.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {trips.map((trip) => (
-            <div key={trip.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div 
+              key={trip.id} 
+              className="shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              style={{ 
+                borderRadius: '20px',
+                backgroundColor: '#ffffff !important',
+                background: '#ffffff !important'
+              }}
+            >
               <div className="relative">
-                <img 
-                  src={trip.image} 
+                <img
+                  src={trip.image}
                   alt={trip.title}
-                  className="w-full h-64 object-cover"
+                  className="w-full h-48 object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="text-2xl font-secondary font-light mb-2">{trip.title}</h3>
+                <div 
+                  className="absolute top-4 right-4 text-white px-3 py-1 rounded-full text-sm font-primary backdrop-blur-md"
+                  style={{
+                    backgroundColor: 'rgba(83, 83, 83, 0.2)',
+                    border: '1px solid white'
+                  }}
+                >
+                  {trip.date}
                 </div>
               </div>
-              
-              <div className="p-6">
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center font-primary text-gray-600">
-                    <MapPin size={16} className="mr-2" />
-                    <span>{trip.location}</span>
+
+              <div className="p-6" style={{ backgroundColor: '#ffffff' }}>
+                <h3 className="text-2xl font-secondary font-light mb-6 text-center"
+                  style={{
+                    fontSize: '36px',
+                    fontFamily: 'Maitree, Georgia, serif'
+                  }}
+                >
+                  {trip.title}
+                </h3>
+                
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>📍</span>
+                    <span className="text-gray-600">{trip.location}</span>
                   </div>
-                  <div className="flex items-center font-primary text-gray-600">
-                    <Calendar size={16} className="mr-2" />
-                    <span>{trip.dates}</span>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>📅</span>
+                    <span className="text-gray-600">{trip.date}</span>
                   </div>
-                  <div className="flex items-center font-primary text-gray-600">
-                    <Users size={16} className="mr-2" />
-                    <span>{trip.activity}</span>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>👥</span>
+                    <span className="text-gray-600">Max {trip.maxParticipants} participants</span>
                   </div>
                 </div>
-                
-                <div className="space-y-3">
-                  <Link 
-                    to={`/trip/${trip.id}`}
-                    className="block w-full bg-orange-500 text-white text-center py-3 rounded-lg hover:bg-orange-600 transition-colors font-primary font-medium"
-                  >
-                    {trip.price}
+
+                <p className="text-gray-600 text-center mb-6 leading-relaxed">
+                  {trip.description}
+                </p>
+
+                <div className="text-center mb-6">
+                  <p className="text-3xl font-bold text-orange-600 mb-2">{trip.price}</p>
+                  <p className="text-sm text-gray-500">per person</p>
+                </div>
+
+                <div className="text-center">
+                  <Link to={`/trip/${trip.id}`}>
+                    <button className="bg-orange-500 text-white px-6 py-3 rounded-md font-primary font-medium hover:bg-orange-600 transition-colors">
+                      Learn More
+                    </button>
                   </Link>
-                  <button className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition-colors font-primary">
-                    Bring a friend, save more!
-                  </button>
                 </div>
               </div>
             </div>

@@ -122,7 +122,15 @@ const BlogPostPage = () => {
       {/* Related Posts */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-light text-center mb-12">Related Articles</h2>
+          <h2 
+            className="font-light text-center mb-12"
+            style={{
+              fontSize: '36px',
+              fontFamily: 'Maitree, Georgia, serif'
+            }}
+          >
+            Related Articles
+          </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((i) => (
