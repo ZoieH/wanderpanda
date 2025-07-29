@@ -81,17 +81,17 @@ const DiscoverSection = () => {
           
           <div className="flex justify-center flex-wrap gap-4 md:gap-8 mb-12">
             {Object.keys(tabContent).map((tabKey) => (
-              <button 
+            <button 
                 key={tabKey}
                 onClick={() => setActiveTab(tabKey)}
                 className={`pb-2 transition-all duration-300 font-primary capitalize ${
                   activeTab === tabKey 
                     ? 'text-white border-b-2 border-white' 
-                    : 'text-gray-300 hover:text-white border-b-2 border-transparent hover:border-gray-600'
-                }`}
-              >
+                  : 'text-gray-300 hover:text-white border-b-2 border-transparent hover:border-gray-600'
+              }`}
+            >
                 {tabKey}
-              </button>
+            </button>
             ))}
           </div>
         </div>
@@ -108,11 +108,11 @@ const DiscoverSection = () => {
               >
                 {currentContent.title}
               </h3>
-              <p className="text-gray-300 font-primary mb-8 leading-relaxed">
-                {currentContent.description}
-              </p>
+            <p className="text-gray-300 font-primary mb-8 leading-relaxed">
+              {currentContent.description}
+            </p>
               <Button variant="outline" size="md">
-                Learn more
+              Learn more
               </Button>
             </div>
           </div>
@@ -123,7 +123,7 @@ const DiscoverSection = () => {
               <div className="flex items-center justify-center space-x-[-20px] relative">
                 {/* Left Image */}
                 <div className="w-[345px] h-[259px] overflow-hidden rounded-lg relative z-10">
-                  <img 
+              <img 
                     src={currentContent.images[(currentImageIndex - 1 + currentContent.images.length) % currentContent.images.length]} 
                     alt={`${activeTab} image left`} 
                     className="w-full h-full object-cover transition-all duration-500 ease-in-out"
@@ -136,24 +136,24 @@ const DiscoverSection = () => {
                   style={{ borderRadius: '8px' }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-800/20">
-                    <img 
+              <img 
                       src={currentContent.images[currentImageIndex]} 
                       alt={`${activeTab} image center`} 
                       className="w-full h-full object-cover transition-all duration-500 ease-in-out"
                       style={{
                         borderRadius: '8px 100px 8px 8px'
                       }}
-                    />
-                  </div>
+              />
+            </div>
                 </div>
                 
                 {/* Right Image */}
                 <div className="w-[345px] h-[259px] overflow-hidden rounded-lg relative z-10">
-                  <img 
+              <img 
                     src={currentContent.images[(currentImageIndex + 1) % currentContent.images.length]} 
                     alt={`${activeTab} image right`} 
                     className="w-full h-full object-cover transition-all duration-500 ease-in-out"
-                  />
+              />
                 </div>
               </div>
               

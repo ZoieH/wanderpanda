@@ -28,8 +28,8 @@ const TripsSection = () => {
               }}
             >
               <div className="relative">
-                <img
-                  src={trip.image}
+                <img 
+                  src={trip.image} 
                   alt={trip.title}
                   className="w-full h-48 object-cover"
                 />
@@ -43,7 +43,7 @@ const TripsSection = () => {
                   {trip.date}
                 </div>
               </div>
-
+              
               <div className="p-6" style={{ backgroundColor: '#ffffff' }}>
                 <h3 className="text-2xl font-secondary font-light mb-6 text-center"
                   style={{
@@ -68,7 +68,7 @@ const TripsSection = () => {
                     <span className="text-gray-600">Max {trip.maxParticipants} participants</span>
                   </div>
                 </div>
-
+                
                 <p className="text-gray-600 text-center mb-6 leading-relaxed">
                   {trip.description}
                 </p>

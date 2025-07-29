@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Search, Filter } from 'lucide-react';
 import Button from '../components/ui/Button';
 import BlogPostCard from '../components/BlogPostCard';
-import { client, POSTS_QUERY } from '../lib/sanity';
+import { client, POSTS_QUERY } from '../lib/sanity.js';
 
 interface BlogPost {
   _id: string;
@@ -108,13 +108,13 @@ const BlogPage = () => {
               <p className="text-gray-500">
                 Make sure you have created posts in your Sanity Studio and they have the correct document type "post".
               </p>
-            </div>
+                    </div>
           ) : (
                         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
               {blogPosts.map((post) => (
                 <BlogPostCard key={post._id} post={post} />
-              ))}
-            </div>
+            ))}
+          </div>
           )}
         </div>
       </section>

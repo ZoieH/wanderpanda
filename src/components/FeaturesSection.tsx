@@ -55,7 +55,7 @@ const FeaturesSection = () => {
               }}
             >
               <div className="p-8">
-                <div className="flex justify-center mb-6">
+              <div className="flex justify-center mb-6">
                   <div 
                     className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-3xl"
                     style={{ borderRadius: '12px' }}

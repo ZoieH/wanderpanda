@@ -33,8 +33,8 @@ const Footer = () => {
               <Link to="/" className="font-primary text-sm text-gray-300 hover:text-white transition-colors">
                 Community
               </Link>
-            </div>
-            
+          </div>
+
             <div className="flex space-x-4">
               <a 
                 href="https://www.facebook.com/share/g/1Fsp7kzTif/" 

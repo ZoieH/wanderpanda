@@ -1,9 +1,9 @@
-import { client } from './sanity'
+import { client } from './sanity.js'
 
 // Simple test query
 export const testConnection = async () => {
   try {
-    const result = await client.fetch('*[_type == "Post"]')
+    const result = await client.fetch('*[_type == "post"]')
     console.log('All posts (any type):', result)
     
     const allDocs = await client.fetch('*[0...10]')
