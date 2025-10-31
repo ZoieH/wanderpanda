@@ -1,45 +1,63 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, ArrowLeft, ThumbsUp } from 'lucide-react';
+import { Calendar, ArrowLeft } from 'lucide-react';
+import { client, POST_QUERY } from '../lib/sanity.js';
+import { PortableText } from '@portabletext/react';
+
+interface Post {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  publishedAt: string;
+  body?: any;
+  excerpt?: string;
+  imageUrl?: string;
+  authorName?: string;
+  authorImage?: string;
+  categories?: string[];
+  estimatedReadingTime?: number;
+}
 
 const BlogPostPage = () => {
   const { id } = useParams();
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Sample blog post data
-  const post = {
-    title: 'Could China Be the Next Digital Nomad Heaven?',
-    date: '24 Oct 2024',
-    tags: ['Insight', 'Spotlight'],
-    likes: 2,
-    image: 'https://images.pexels.com/photos/2506923/pexels-photo-2506923.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop',
-    content: `
-      <p>China is rapidly emerging as an unexpected destination for digital nomads, offering a unique blend of ancient culture and cutting-edge technology that creates an unparalleled work-travel experience.</p>
-      
-      <h2>Why China is Attracting Digital Nomads</h2>
-      
-      <p>The recent visa policy changes, including the 30-day visa-free entry for citizens from multiple countries, have made China more accessible than ever before. This, combined with world-class infrastructure, affordable living costs in many cities, and incredible cultural experiences, makes China an attractive option for location-independent workers.</p>
-      
-      <h3>Infrastructure and Connectivity</h3>
-      
-      <p>China boasts some of the world's fastest internet speeds and most extensive digital payment systems. Cities like Shanghai, Beijing, and Shenzhen offer co-working spaces that rival those in traditional nomad hubs like Bali or Mexico City.</p>
-      
-      <h3>Cultural Immersion</h3>
-      
-      <p>Unlike many popular nomad destinations, China offers profound cultural immersion opportunities. From ancient temples and traditional tea ceremonies to modern art districts and innovative startup scenes, digital nomads can experience a depth of culture that's hard to find elsewhere.</p>
-      
-      <h2>Challenges to Consider</h2>
-      
-      <p>While China offers incredible opportunities, there are challenges to navigate. The language barrier, different internet ecosystem, and cultural differences require preparation and an open mindset. However, these challenges often become part of the adventure and personal growth that makes the experience so rewarding.</p>
-      
-      <h2>The Future of Nomadism in China</h2>
-      
-      <p>As China continues to open up and adapt to international travelers, we expect to see more nomad-friendly policies and infrastructure. The country's commitment to innovation and its rich cultural heritage make it a compelling destination for the next generation of digital nomads.</p>
-    `
-  };
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const data = await client.fetch(POST_QUERY, { slug: id });
+        setPost(data);
+      } catch (err) {
+        console.error('Error fetching post', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPost();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-16 flex items-center justify-center">
+        <div className="text-xl">Loading post...</div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="min-h-screen pt-16 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-xl mb-4">Post not found.</p>
+          <Link to="/blog" className="text-orange-500 hover:text-orange-600">Back to Blog</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-16">
-      {/* Header */}
       <div className="bg-white py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link to="/blog" className="inline-flex items-center text-orange-500 hover:text-orange-600 mb-8">
@@ -49,109 +67,34 @@ const BlogPostPage = () => {
         </div>
       </div>
 
-      {/* Featured Image */}
-      <div className="relative h-96 bg-gray-900">
-        <img 
-          src={post.image} 
-          alt={post.title}
-          className="w-full h-full object-cover opacity-80"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-      </div>
+      {post.imageUrl && (
+        <div className="relative h-96 bg-gray-900">
+          <img 
+            src={post.imageUrl}
+            alt={post.title}
+            className="w-full h-full object-cover opacity-80"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        </div>
+      )}
 
-      {/* Article Content */}
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <header className="mb-12">
           <div className="flex items-center text-sm text-gray-500 mb-4">
             <Calendar size={16} className="mr-2" />
-            <span>{post.date}</span>
+            <span>{new Date(post.publishedAt).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</span>
           </div>
-          
-          <h1 className="text-4xl md:text-5xl font-light mb-6">
-            {post.title}
-          </h1>
-          
-          <div className="flex flex-wrap gap-2 mb-6">
-            {post.tags.map((tag) => (
-              <span 
-                key={tag}
-                className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          
-          <div className="flex items-center text-gray-400">
-            <ThumbsUp size={16} className="mr-2" />
-            <span>{post.likes} likes</span>
-          </div>
+          <h1 className="text-4xl md:text-5xl font-light mb-6">{post.title}</h1>
         </header>
 
-        <div 
-          className="prose prose-lg max-w-none"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
-
-        {/* Social Share */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-600">Share this article:</span>
-              <div className="flex space-x-2">
-                <button className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
-                  f
-                </button>
-                <button className="w-10 h-10 bg-blue-400 text-white rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
-                  t
-                </button>
-                <button className="w-10 h-10 bg-blue-800 text-white rounded-full flex items-center justify-center hover:bg-blue-900 transition-colors">
-                  in
-                </button>
-              </div>
-            </div>
-            
-            <button className="flex items-center text-orange-500 hover:text-orange-600">
-              <ThumbsUp size={20} className="mr-2" />
-              Like this post
-            </button>
+        {post.body ? (
+          <div className="prose prose-lg max-w-none">
+            <PortableText value={post.body} />
           </div>
-        </div>
+        ) : (
+          <p className="text-gray-700">{post.excerpt}</p>
+        )}
       </article>
-
-      {/* Related Posts */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 
-            className="font-light text-center mb-12"
-            style={{
-              fontSize: '36px',
-              fontFamily: 'Maitree, Georgia, serif'
-            }}
-          >
-            Related Articles
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
-                <img 
-                  src={`https://images.pexels.com/photos/${2506923 + i}/pexels-photo-${2506923 + i}.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop`} 
-                  alt="Related post"
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="font-medium mb-2">Related Article Title {i}</h3>
-                  <p className="text-gray-600 text-sm mb-4">Brief description of the related article...</p>
-                  <Link to="#" className="text-orange-500 hover:text-orange-600 text-sm font-medium">
-                    Read More
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

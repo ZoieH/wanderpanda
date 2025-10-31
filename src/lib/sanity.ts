@@ -1,4 +1,5 @@
 import { createClient } from '@sanity/client'
+import imageUrlBuilder from '@sanity/image-url'
 
 export const client = createClient({
   projectId: '09li49be', // Get this from your Sanity dashboard
@@ -6,6 +7,12 @@ export const client = createClient({
   useCdn: true,
   apiVersion: '2023-05-03',
 })
+
+const builder = imageUrlBuilder(client)
+
+export function urlFor(source: any) {
+  return builder.image(source)
+}
 
 // Blog post queries
 export const POSTS_QUERY = `*[
@@ -17,7 +24,8 @@ export const POSTS_QUERY = `*[
   slug,
   publishedAt,
   excerpt,
-  "imageUrl": image.asset->url,
+  mainImage,
+  "imageUrl": mainImage.asset->url,
   "authorName": author->name,
   "authorImage": author->image.asset->url,
   "categories": categories[]->title,
@@ -34,7 +42,8 @@ export const POST_QUERY = `*[
   publishedAt,
   body,
   excerpt,
-  "imageUrl": image.asset->url,
+  mainImage,
+  "imageUrl": mainImage.asset->url,
   "authorName": author->name,
   "authorImage": author->image.asset->url,
   "categories": categories[]->title,

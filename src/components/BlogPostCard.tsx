@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { urlFor } from '../lib/sanity.js';
 import { Calendar, Clock, User, Tag } from 'lucide-react';
 
 interface BlogPostCardProps {
@@ -9,6 +10,7 @@ interface BlogPostCardProps {
     slug: { current: string };
     publishedAt: string;
     excerpt?: string;
+    mainImage?: any;
     imageUrl?: string;
     authorName?: string;
     authorImage?: string;
@@ -23,11 +25,19 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ post }) => {
       {/* Featured Image */}
       <Link to={`/blog/${post.slug.current}`} className="block relative overflow-hidden">
         <div className="aspect-[16/10] bg-gradient-to-br from-orange-100 to-orange-200">
-          <img 
-            src={post.imageUrl || 'https://images.pexels.com/photos/2506923/pexels-photo-2506923.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop'} 
-            alt={post.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+          {post.mainImage ? (
+            <img
+              src={urlFor(post.mainImage).width(800).height(500).fit('crop').auto('format').url()}
+              alt={post.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <img 
+              src={post.imageUrl || 'https://images.pexels.com/photos/2506923/pexels-photo-2506923.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop'} 
+              alt={post.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          )}
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
