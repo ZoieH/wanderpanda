@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, ArrowLeft } from 'lucide-react';
-import { client, POST_QUERY } from '../lib/sanity.js';
+import { Calendar } from 'lucide-react';
+import { client, POST_QUERY, urlFor } from '../lib/sanity.js';
 import { PortableText } from '@portabletext/react';
 
 interface Post {
@@ -56,17 +56,12 @@ const BlogPostPage = () => {
     );
   }
 
+  const categoriesText = post.categories && post.categories.length > 0
+    ? post.categories.map(cat => cat.toUpperCase()).join(', ')
+    : '';
+
   return (
     <div className="min-h-screen pt-16">
-      <div className="bg-white py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link to="/blog" className="inline-flex items-center text-orange-500 hover:text-orange-600 mb-8">
-            <ArrowLeft size={20} className="mr-2" />
-            Back to Blog
-          </Link>
-        </div>
-      </div>
-
       {post.imageUrl && (
         <div className="relative h-96 bg-gray-900">
           <img 
@@ -78,6 +73,37 @@ const BlogPostPage = () => {
         </div>
       )}
 
+      <div className="bg-white py-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Breadcrumb */}
+          <nav className="flex items-center text-sm text-gray-600 flex-wrap gap-x-2">
+            <Link 
+              to="/" 
+              className="hover:text-orange-500 transition-colors"
+            >
+              HOME
+            </Link>
+            <span className="text-gray-400">&gt;</span>
+            <Link 
+              to="/blog" 
+              className="hover:text-orange-500 transition-colors"
+            >
+              BLOG
+            </Link>
+            {categoriesText && (
+              <>
+                <span className="text-gray-400">&gt;</span>
+                <span className="text-gray-800">{categoriesText}</span>
+              </>
+            )}
+            <span className="text-gray-400">&gt;</span>
+            <span className="text-gray-900 font-medium line-clamp-1">
+              {post.title.toUpperCase()}
+            </span>
+          </nav>
+        </div>
+      </div>
+
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <header className="mb-12">
           <div className="flex items-center text-sm text-gray-500 mb-4">
@@ -88,8 +114,45 @@ const BlogPostPage = () => {
         </header>
 
         {post.body ? (
-          <div className="prose prose-lg max-w-none">
-            <PortableText value={post.body} />
+          <div className="blog-content prose prose-lg max-w-none">
+            <PortableText 
+              value={post.body}
+              components={{
+                types: {
+                  callout: ({value}: any) => (
+                    <div className={`blog-callout blog-callout-${value.type || 'info'}`}>
+                      <p>{value.text}</p>
+                    </div>
+                  ),
+                  image: ({value}: any) => {
+                    if (!value?.asset?._ref) {
+                      return null;
+                    }
+                    return (
+                      <figure className="blog-image">
+                        <img 
+                          src={urlFor(value).width(1200).auto('format').url()} 
+                          alt={value.alt || ''}
+                          className="w-full rounded-lg"
+                        />
+                        {value.caption && (
+                          <figcaption className="text-sm text-gray-600 mt-2 text-center italic">
+                            {value.caption}
+                          </figcaption>
+                        )}
+                      </figure>
+                    );
+                  },
+                },
+                block: {
+                  blockquote: ({children}: any) => (
+                    <blockquote className="blog-blockquote">
+                      {children}
+                    </blockquote>
+                  ),
+                },
+              }}
+            />
           </div>
         ) : (
           <p className="text-gray-700">{post.excerpt}</p>
