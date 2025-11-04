@@ -14,6 +14,21 @@ export function urlFor(source: any) {
   return builder.image(source)
 }
 
+export const RELATED_POSTS_QUERY = `*[
+  _type == "post" 
+  && slug.current != $slug
+  && count((categories[]->title)[@ in $categories]) > 0
+]|order(publishedAt desc)[0...3]{
+  _id,
+  title,
+  slug,
+  publishedAt,
+  excerpt,
+  mainImage,
+  "imageUrl": mainImage.asset->url,
+  "categories": categories[]->title
+}`
+
 // Blog post queries
 export const POSTS_QUERY = `*[
   _type == "post"
@@ -47,5 +62,10 @@ export const POST_QUERY = `*[
   "authorName": author->name,
   "authorImage": author->image.asset->url,
   "categories": categories[]->title,
+  seo{
+    metaTitle,
+    metaDescription,
+    keywords
+  },
   "estimatedReadingTime": round(length(pt::text(body)) / 5 / 180 )
 }` 

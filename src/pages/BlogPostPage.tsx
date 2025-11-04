@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
-import { client, POST_QUERY, urlFor } from '../lib/sanity.js';
+import { client, POST_QUERY, RELATED_POSTS_QUERY, urlFor } from '../lib/sanity.js';
 import { PortableText } from '@portabletext/react';
 
 interface Post {
@@ -16,18 +16,44 @@ interface Post {
   authorImage?: string;
   categories?: string[];
   estimatedReadingTime?: number;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+  };
+}
+
+interface RelatedPostSummary {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  publishedAt: string;
+  excerpt?: string;
+  imageUrl?: string;
+  mainImage?: any;
+  categories?: string[];
 }
 
 const BlogPostPage = () => {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
+  const [relatedPosts, setRelatedPosts] = useState<RelatedPostSummary[]>([]);
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const data = await client.fetch(POST_QUERY, { slug: id });
         setPost(data);
+        if (data?.categories && data.categories.length > 0) {
+          const rel = await client.fetch(RELATED_POSTS_QUERY, {
+            slug: data.slug?.current,
+            categories: data.categories,
+          });
+          setRelatedPosts(rel || []);
+        } else {
+          setRelatedPosts([]);
+        }
       } catch (err) {
         console.error('Error fetching post', err);
       } finally {
@@ -36,6 +62,86 @@ const BlogPostPage = () => {
     };
     fetchPost();
   }, [id]);
+
+  // Basic SEO tags without extra deps
+  useEffect(() => {
+    if (!post) return;
+    const title = post.seo?.metaTitle || post.title;
+    const description = post.seo?.metaDescription || post.excerpt || '';
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    const image = post.imageUrl || '';
+
+    // Title
+    const prevTitle = document.title;
+    document.title = title;
+
+    // Helpers
+    const setMeta = (name: string, content: string, attr: 'name' | 'property' = 'name') => {
+      if (!content) return;
+      let tag = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute(attr, name);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute('content', content);
+    };
+
+    // Standard meta
+    setMeta('description', description);
+    if (post.seo?.keywords && post.seo.keywords.length > 0) {
+      setMeta('keywords', post.seo.keywords.join(', '));
+    }
+
+    // Open Graph
+    setMeta('og:type', 'article', 'property');
+    setMeta('og:title', title, 'property');
+    setMeta('og:description', description, 'property');
+    if (url) setMeta('og:url', url, 'property');
+    if (image) setMeta('og:image', image, 'property');
+
+    // Twitter
+    setMeta('twitter:card', image ? 'summary_large_image' : 'summary');
+    setMeta('twitter:title', title);
+    setMeta('twitter:description', description);
+    if (image) setMeta('twitter:image', image);
+
+    // Canonical
+    let linkCanonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!linkCanonical) {
+      linkCanonical = document.createElement('link');
+      linkCanonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(linkCanonical);
+    }
+    if (url) linkCanonical.setAttribute('href', url);
+
+    // JSON-LD Article schema
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      datePublished: post.publishedAt,
+      image: image ? [image] : undefined,
+      author: post.authorName ? { '@type': 'Person', name: post.authorName } : undefined,
+      articleSection: post.categories && post.categories.length > 0 ? post.categories : undefined,
+      description,
+      mainEntityOfPage: url || undefined,
+    } as any;
+
+    let script = document.getElementById('post-jsonld') as HTMLScriptElement | null;
+    if (!script) {
+      script = document.createElement('script');
+      script.id = 'post-jsonld';
+      (script as HTMLScriptElement).type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+    (script as HTMLScriptElement).textContent = JSON.stringify(jsonLd);
+
+    // Cleanup on unmount
+    return () => {
+      document.title = prevTitle;
+    };
+  }, [post]);
 
   if (loading) {
     return (
@@ -158,6 +264,55 @@ const BlogPostPage = () => {
           <p className="text-gray-700">{post.excerpt}</p>
         )}
       </article>
+
+      {relatedPosts.length > 0 && (
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 
+              className="font-light text-center mb-12"
+              style={{
+                fontSize: '36px',
+                fontFamily: 'Maitree, Georgia, serif'
+              }}
+            >
+              Related Articles
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {relatedPosts.map((rp) => (
+                <div key={rp._id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                  <Link to={`/blog/${rp.slug.current}`} className="block">
+                    <div className="aspect-[16/10] bg-gray-100">
+                      {rp.imageUrl ? (
+                        <img 
+                          src={rp.imageUrl}
+                          alt={rp.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : rp.mainImage ? (
+                        <img
+                          src={urlFor(rp.mainImage).width(600).height(375).fit('crop').auto('format').url()}
+                          alt={rp.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-100" />
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <h3 className="font-medium mb-2 line-clamp-2">{rp.title}</h3>
+                      {rp.publishedAt && (
+                        <p className="text-sm text-gray-500">
+                          {new Date(rp.publishedAt).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

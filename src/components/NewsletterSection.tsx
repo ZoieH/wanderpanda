@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Button from './ui/Button';
+import { useNewsletter } from '../hooks/useNewsletter';
 
 const NewsletterSection = () => {
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle newsletter subscription
-    console.log('Newsletter subscription:', { email, name });
-  };
+  const {
+    email,
+    name,
+    setEmail,
+    setName,
+    loading,
+    success,
+    error,
+    handleSubmit,
+  } = useNewsletter();
 
   return (
     <section className="py-20">
@@ -47,6 +50,16 @@ const NewsletterSection = () => {
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
+                {success && (
+                  <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-sm">
+                    Successfully subscribed! Check your email for confirmation.
+                  </div>
+                )}
+                {error && (
+                  <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
+                    {error}
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email
@@ -56,7 +69,8 @@ const NewsletterSection = () => {
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-primary"
+                    disabled={loading}
+                    className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
                     required
                   />
                 </div>
@@ -70,7 +84,8 @@ const NewsletterSection = () => {
                     placeholder="Enter your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-primary"
+                    disabled={loading}
+                    className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
                     required
                   />
                 </div>
@@ -79,8 +94,9 @@ const NewsletterSection = () => {
                   type="submit"
                   variant="outline-dark"
                   size="md"
+                  disabled={loading}
                 >
-                  Subscribe
+                  {loading ? 'Subscribing...' : 'Subscribe'}
                 </Button>
               </form>
             </div>

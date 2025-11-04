@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Search, Filter } from 'lucide-react';
-import Button from '../components/ui/Button';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import BlogPostCard from '../components/BlogPostCard';
+import NewsletterSection from '../components/NewsletterSection';
 import { client, POSTS_QUERY } from '../lib/sanity.js';
 
 interface BlogPost {
@@ -20,6 +21,9 @@ interface BlogPost {
 const BlogPage = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchInput, setSearchInput] = useState<string>(searchParams.get('q') || '');
+  const [debouncedQuery, setDebouncedQuery] = useState<string>(searchInput);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -49,6 +53,35 @@ const BlogPage = () => {
 
     fetchPosts();
   }, []);
+
+  // Debounce the search input
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQuery(searchInput.trim()), 250);
+    return () => clearTimeout(id);
+  }, [searchInput]);
+
+  // Sync URL with query
+  useEffect(() => {
+    const q = debouncedQuery;
+    const next = new URLSearchParams(searchParams);
+    if (q) {
+      next.set('q', q);
+    } else {
+      next.delete('q');
+    }
+    setSearchParams(next, {replace: true});
+  }, [debouncedQuery, searchParams, setSearchParams]);
+
+  const filteredPosts = useMemo(() => {
+    const q = debouncedQuery.toLowerCase();
+    if (!q) return blogPosts;
+    return blogPosts.filter((p) => {
+      const inTitle = p.title?.toLowerCase().includes(q);
+      const inExcerpt = p.excerpt?.toLowerCase().includes(q);
+      const inCats = (p.categories || []).some((c) => c.toLowerCase().includes(q));
+      return inTitle || inExcerpt || inCats;
+    });
+  }, [blogPosts, debouncedQuery]);
 
   if (loading) {
     return (
@@ -82,19 +115,18 @@ const BlogPage = () => {
             Discover travel insights, digital nomad tips, and cultural experiences from around the world
           </p>
           
-          {/* Search and Filter */}
+          {/* Search */}
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <div className="relative flex-1">
               <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search articles..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
             </div>
-            <button className="flex items-center justify-center px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              <Filter size={20} className="text-gray-600" />
-            </button>
           </div>
         </div>
       </div>
@@ -110,39 +142,24 @@ const BlogPage = () => {
               </p>
                     </div>
           ) : (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-              {blogPosts.map((post) => (
+                       <>
+                       {debouncedQuery && filteredPosts.length === 0 && (
+                         <div className="text-center py-10">
+                           <p className="text-gray-600">No results for "{debouncedQuery}"</p>
+                         </div>
+                       )}
+                       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+              {filteredPosts.map((post) => (
                 <BlogPostCard key={post._id} post={post} />
             ))}
           </div>
+           </>
           )}
         </div>
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-100 to-blue-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-light mb-6">
-            Subscribe and get first hand useful resource.
-          </h2>
-          
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="text"
-              placeholder="How should we call you?"
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            />
-            <input
-              type="email"
-              placeholder="Your Email"
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            />
-            <Button variant="secondary" size="md">
-              Subscribe
-            </Button>
-          </div>
-        </div>
-      </section>
+      <NewsletterSection />
     </div>
   );
 };
